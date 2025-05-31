@@ -24,12 +24,17 @@ const ImageDB = {
         const db = await ImageDB.openDB()
         return await db.getAllKeys(this.keyPath)
     },
+    async clear() {
+        const db = await ImageDB.openDB();
+        return await db.clear(this.keyPath);
+    }
 }
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     const imageUploadElement = document.getElementById('imageUpload');
     const getFileButton = document.getElementById('getFileButton');
+    const deleteAllButton = document.getElementById('deleteAllButton');
     const imagePreviewContainer = document.getElementById('imagePreviewContainer');
 
     if (imageUploadElement) {
@@ -96,6 +101,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (imagePreviewContainer) {
                     imagePreviewContainer.textContent = 'No images found in the database.';
                 }
+            }
+        });
+    }
+
+    if (deleteAllButton) {
+        deleteAllButton.addEventListener('click', async () => {
+            try {
+                await ImageDB.clear();
+                console.log('All images deleted from IndexedDB.');
+                if (imagePreviewContainer) {
+                    imagePreviewContainer.innerHTML = 'All cached images have been deleted.';
+                }
+                alert('All cached images have been deleted.');
+            } catch (error) {
+                console.error('Error deleting all images:', error);
+                alert('Error deleting images. See console for details.');
             }
         });
     }
